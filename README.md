@@ -1,91 +1,68 @@
-Energy Consumption and Electricity Cost Estimation – Taiwan ETC
-Overview
-This project develops a predictive model to estimate daily electricity consumption and costs for Taiwan’s Electronic Toll Collection (ETC) system.
-The objective is to forecast energy demand using temperature and infrastructure data, enabling more efficient planning and cost optimization.
+# Energy Consumption and Electricity Cost Estimation – Taiwan ETC
 
-Dataset
-The dataset, provided by the instructor, includes:
+## Overview
+This project presents a predictive model designed to estimate daily electricity consumption and associated costs for Taiwan’s **Electronic Toll Collection (ETC)** system.  
+By leveraging temperature and infrastructure data, the model aims to forecast energy demand, enabling improved planning, operational efficiency, and cost optimization.
 
-Two months of electricity billing records.
+## Dataset
+The dataset, provided by the course instructor, consists of:
+- Two months of electricity billing records.
+- Minute-level voltage and current sensor data from ETC stations.
+- Daily temperature data from **19 meteorological stations** across Taiwan.
 
-Minute-level voltage and current sensor data.
+## Data Preprocessing
+1. **Weather Data Transformation**  
+   Converted meteorological datasets from a matrix format (days × months) into a tabular structure containing:
+   - Date  
+   - Temperature  
+   - Station name  
+   - Station ID  
+   - Latitude and longitude  
+   
+2. **Merging Infrastructure and Billing Data**  
+   Aggregated hourly electricity usage from ETC stations (server shelter + gantry) into daily totals and merged them with the billing dataset.
 
-Daily temperature readings from 19 meteorological stations across Taiwan.
+3. **Geographical Matching**  
+   Linked each gantry to its nearest meteorological station using latitude and longitude coordinates.
 
-Data Preprocessing
-Transformed meteorological data from matrix format (days vs. months) into tabular format containing:
+## Model
+We implemented the **CatBoost Regressor**, a decision tree–based machine learning algorithm known for handling both numerical and categorical features effectively.
 
-Date
+**Key configuration details:**
+- Tuned for capturing non-linear daily patterns.
+- Applied regularization to prevent overfitting.
+- Progressive learning over 1000 iterations.
+- Training restricted to 2024 data to maintain test set integrity.
 
-Temperature
+## How It Works
+- Learns consumption patterns from daily historical data.
+- Builds multiple small decision trees, each improving the accuracy of the previous ones.
+- Combines the predictions of all trees to produce the final output.
 
-Station name
+## Key Findings
+- **Temperature Effect:** Higher temperatures lead to increased electricity consumption, especially in summer.
+- **Lane Count Effect:** Stations with more lanes consume more energy on average.
+- **Combined Effect:** High temperatures combined with high lane counts significantly raise consumption.
 
-Station ID
+## Evaluation Metrics
+- **R² (Explained Variance):** Measures the proportion of variance captured by the model (close to 1 indicates excellent fit).
+- **RMSE (Root Mean Squared Error):** Quantifies error magnitude, penalizing large deviations.
+- **MAE (Mean Absolute Error):** Reports average prediction error in kWh.
+- **Accuracy (% vs. Real Billing):** Compares predictions against actual billed values.
 
-Latitude and longitude
+## Results
+- Tested on billing periods from late 2024 to early 2025.
+- Achieved **over 80% accuracy** with low prediction errors.
+- Proven reliability for energy demand forecasting in real-world operational scenarios.
 
-Merged ETC station data (server shelter + gantry structure) with billing data by aggregating hourly consumption to daily totals for each gantry.
+## Repository Structure
+- `Code.ipynb` – Main Jupyter Notebook for training, testing, and evaluating the model.
+- `training_ready_dataset_balltree.csv` – Final preprocessed dataset.
+- `daily_predictions.csv` – Predicted daily electricity usage.
+- `all_gantries_period_predictions_with_accuracy.csv` – Gantry-level predictions with accuracy metrics.
+- `Electricity data of the toll station-phase 1.xlsx` – Original infrastructure and billing data.
+- `Project_Presentation.pdf` – Full project presentation slides.
+- `catboost_info/` – Directory containing CatBoost training logs and metadata.
 
-Matched each gantry to its nearest meteorological station using latitude and longitude.
-
-Model
-The model used is CatBoost Regressor, a decision tree–based machine learning algorithm capable of handling both numeric and categorical data efficiently, and performing well in non-linear scenarios.
-
-Key settings:
-
-Tuned for non-linear daily patterns.
-
-Regularization to prevent overfitting.
-
-Progressive learning over 1000 iterations.
-
-Only 2024 data used to preserve future test integrity.
-
-How It Works
-Learns from daily patterns in energy usage.
-
-Builds many small trees, each improving upon the last.
-
-Combines results from all trees to produce the final prediction.
-
-Key Findings
-Temperature Effect: Energy consumption rises with higher temperatures, especially in summer.
-
-Lane Count Effect: More lanes in a gantry generally lead to higher electricity consumption.
-
-Combined Effect: High temperatures and many lanes together result in significantly increased energy demand.
-
-Evaluation Metrics
-R² (Explained Variance): Measures how well the model captures overall patterns (higher is better; close to 1 is excellent).
-
-RMSE (Root Mean Squared Error): Quantifies prediction error magnitude, penalizing large deviations.
-
-MAE (Mean Absolute Error): Average prediction error in kWh.
-
-Accuracy (% vs. Real Billing): How close predictions are to actual billed values.
-
-Results
-Tested on real billing periods from late 2024 to early 2025.
-
-Achieved over 80% accuracy with small prediction errors.
-
-Demonstrated reliability for energy forecasting in real-world conditions.
-
-Files in This Repository
-Code.ipynb – Main Jupyter Notebook with model training and evaluation.
-
-training_ready_dataset_balltree.csv – Final preprocessed dataset ready for training.
-
-daily_predictions.csv – Predicted daily consumption values.
-
-all_gantries_period_predictions_with_accuracy.csv – Predictions per gantry with accuracy scores.
-
-Electricity data of the toll station-phase 1.xlsx – Raw billing and sensor data.
-
-Project_Presentation.pdf – Presentation summarizing the project.
-
-catboost_info/ – CatBoost model details and logs.
-
-Conclusion
-The project successfully demonstrates the feasibility of predicting ETC system electricity usage with high precision using environmental and infrastructure data. These insights can help optimize energy efficiency and reduce operational costs.
+## Conclusion
+This project demonstrates the feasibility of using machine learning, specifically **CatBoost**, to forecast energy consumption for large-scale infrastructure. By integrating environmental and structural variables, the model provides valuable insights for improving energy efficiency and cost control.
